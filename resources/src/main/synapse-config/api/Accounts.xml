@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/bank" name="Accounts" xmlns="http://ws.apache.org/ns/synapse">
+  <resource methods="POST GET" protocol="http" url-mapping="/accounts">
+    <inSequence>
+      <log level="full">
+        <property name="*** INSIDE" value="/bank/accounts"/>
+      </log>
+      <log level="full">
+        <property name="*** IN=PAYLOAD" expression="json-eval($.)"/>
+      </log>
+      <send>
+        <endpoint key="conf:/endpoints/wiremock.xml"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <send/>
+    </outSequence>
+    <faultSequence/>
+  </resource>
+  <resource methods="GET" protocol="http" uri-template="/accounts/{id}">
+    <inSequence>
+      <log level="full">
+        <property name="*** OUT=PAYLOAD" expression="json-eval($.)"/>
+      </log>
+      <log level="full">
+        <property name="*** OUTSIDE" value="/bank/accounts"/>
+      </log>
+      <send>
+        <endpoint>
+          <address trace="disable" uri="http://localhost:8080"/>
+        </endpoint>
+      </send>
+    </inSequence>
+    <outSequence>
+      <send/>
+    </outSequence>
+    <faultSequence/>
+  </resource>
+</api>

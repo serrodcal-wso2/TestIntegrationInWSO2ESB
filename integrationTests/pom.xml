@@ -1,0 +1,153 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.serrodcal.esb</groupId>
+        <artifactId>pipeline</artifactId>
+        <version>${project.version}</version>
+    </parent>
+    <groupId>com.serrodcal.esb.it</groupId>
+    <artifactId>integrationTests</artifactId>
+    <properties>
+        <cucumber.version>2.3.1</cucumber.version>
+        <junit.version>4.12</junit.version>
+        <wiremock.version>2.12.0</wiremock.version>
+        <apache.httpclient.version>4.5.4</apache.httpclient.version>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <skipTests>false</skipTests>
+        <skipITs>${skipTests}</skipITs>
+        <skipUTs>true</skipUTs>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <car.name>carbon</car.name>
+        <max.polling.seconds>15</max.polling.seconds>
+    </properties>
+
+    <build>
+        <plugins>
+            <!-- Check CAR deployment solution 1: Constant timeout -->
+            <!--
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>sleep-for-a-while</id>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <target>
+                                <echo>Sleeping for waiting ESB deployment.</echo>
+                                <sleep seconds="15"/>
+                                <echo>End waiting.</echo>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            -->
+
+            <!-- Check CAR deployment solution 2: Conectivity test using polling -->
+            <plugin>
+                <groupId>com.lazerycode.jmeter</groupId>
+                <artifactId>jmeter-maven-plugin</artifactId>
+                <version>2.6.0</version>
+                <configuration>
+                  <overrideRootLogLevel>DEBUG</overrideRootLogLevel>
+                  <generateReports>false</generateReports>
+                  <ignoreResultFailures>true</ignoreResultFailures>
+                  <propertiesUser>
+                    <carName>${car.name}</carName>
+                    <maxPollingSeconds>${max.polling.seconds}</maxPollingSeconds>
+                  </propertiesUser>
+                </configuration>
+                <executions>
+                   <execution>
+                        <id>configure</id>
+                        <goals>
+                            <goal>configure</goal>
+                        </goals>
+                   </execution>
+                   <execution>
+                        <id>jmeter-tests</id>
+                        <goals>
+                            <goal>jmeter</goal>
+                        </goals>
+                   </execution>
+                   <execution>
+                        <id>jmeter-check-results</id>
+                        <goals>
+                            <goal>results</goal>
+                        </goals>
+                   </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <configuration>
+                    <skipTests>${skipUTs}</skipTests>
+                    <excludes>
+                        <exclude>**/*IT*.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.19.1</version>
+                <executions>
+                    <execution>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <skipTests>${skipTests}</skipTests>
+                    <skipITs>${skipITs}</skipITs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java8</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock</artifactId>
+            <version>${wiremock.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${apache.httpclient.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

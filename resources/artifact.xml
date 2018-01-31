@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?><artifacts>
+    <artifact name="Accounts" groupId="com.serrodcal.esb.resources.api" version="1.0.0" type="synapse/api" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/api/Accounts.xml</file>
+    </artifact>
+</artifacts>
