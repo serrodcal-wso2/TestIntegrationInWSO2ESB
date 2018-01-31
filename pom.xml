@@ -9,7 +9,7 @@
   <name>integrationDemo</name>
   <description>Proof of concept about pipeline with integration test for WSO2 ESB projects.</description>
   <organization>
-    <name>ING</name>
+    <name>serrodcal</name>
   </organization>
   <properties>
  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
